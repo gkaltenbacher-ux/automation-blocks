@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-28",
+  "description": "Katalog aller verfügbaren Automations-Bausteine. Wird vom Planer gelesen und von Claude Code aktualisiert.",
+  "blocks": {
+    "email_monitor": {
+      "name": "E-Mail Monitor",
+      "file": "email_monitor.py",
+      "description": "Prüft eine IMAP-Inbox auf neue E-Mails",
+      "input": "IMAP-Zugangsdaten via config",
+      "output": {"success": true, "data": {"emails": []}},
+      "required_keys": [],
+      "status": "stable",
+      "use_cases": ["E-Mail-basierte Automationen", "Inbox-Monitoring"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "llm_summarizer": {
+      "name": "LLM Zusammenfasser",
+      "file": "llm_summarizer.py",
+      "description": "Fasst Text mit einem LLM zusammen (OpenAI oder Anthropic)",
+      "input": {"text": "Zu zusammenfassender Text"},
+      "output": {"success": true, "data": {"summary": "..."}},
+      "required_keys": ["openai oder anthropic"],
+      "status": "stable",
+      "model_recommendations": {
+        "budget": "gpt-4o-mini (~$0.15/1K Aufrufe)",
+        "quality": "gpt-4o (~$2.50/1K Aufrufe)",
+        "alternative": "claude-haiku-4-5 (~$0.25/1K Aufrufe)"
+      },
+      "use_cases": ["Text-Zusammenfassungen", "E-Mail-Digests", "Report-Generierung"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "rss_fetcher": {
+      "name": "RSS Fetcher",
+      "file": "rss_fetcher.py",
+      "description": "Ruft einen RSS-Feed ab und findet neue Einträge",
+      "input": {"feed_url": "URL des RSS-Feeds"},
+      "output": {"success": true, "data": {"new_entries": []}},
+      "required_keys": [],
+      "status": "stable",
+      "use_cases": ["News-Monitoring", "Blog-Überwachung", "Content-Aggregation"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "slack_notifier": {
+      "name": "Slack Benachrichtiger",
+      "file": "slack_notifier.py",
+      "description": "Sendet eine Nachricht an einen Slack-Webhook",
+      "input": {"message": "Nachrichtentext"},
+      "output": {"success": true, "data": {"sent": true}},
+      "required_keys": ["slack"],
+      "status": "stable",
+      "use_cases": ["Team-Benachrichtigungen", "Alert-System", "Status-Updates"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "system_check": {
+      "name": "System Check",
+      "file": "system_check.py",
+      "description": "Prüft DB, API-Keys und loggt eine Zusammenfassung",
+      "input": {},
+      "output": {"success": true, "data": {"db_ok": true, "keys_ok": true}},
+      "required_keys": [],
+      "status": "stable",
+      "use_cases": ["Health-Checks", "Monitoring", "Diagnose"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "webhook_receiver": {
+      "name": "Webhook Empfänger",
+      "file": "webhook_receiver.py",
+      "description": "Empfängt externe Webhooks und leitet Daten in die Pipeline weiter",
+      "input": {"webhook_data": "Eingehende Daten"},
+      "output": {"success": true, "data": {"received": true}},
+      "required_keys": [],
+      "status": "stable",
+      "use_cases": ["CRM-Integration", "Externe Trigger", "Event-basierte Automationen"],
+      "statistics": {"used_in_projects": 0, "known_issues": []}
+    }
+  },
+  "total_blocks": 6,
+  "stable_blocks": 6,
+  "beta_blocks": 0,
+  "planned_blocks": 0
+}

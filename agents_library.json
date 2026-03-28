@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "last_updated": "2026-03-28",
+  "description": "Katalog aller Standard-Patterns für Automationen. Wird vom Planer gelesen und von Claude Code aktualisiert.",
+  "patterns": {
+    "monitor_summarize_notify": {
+      "name": "Monitor → Zusammenfassen → Benachrichtigen",
+      "description": "Überwacht eine Quelle, fasst neue Inhalte zusammen und benachrichtigt das Team",
+      "blocks": ["email_monitor ODER rss_fetcher", "llm_summarizer", "slack_notifier"],
+      "use_cases": ["E-Mail-Digest", "News-Monitoring", "Inbox-Management"],
+      "estimated_setup": "2-3 Stunden",
+      "estimated_monthly_cost_eur": "5-15",
+      "example_config": {
+        "automations": [
+          {
+            "id": "daily_digest",
+            "name": "Täglicher E-Mail-Digest",
+            "blocks": ["email_monitor", "llm_summarizer", "slack_notifier"],
+            "schedule": "0 8 * * 1-5",
+            "active": true
+          }
+        ]
+      }
+    },
+    "webhook_process_notify": {
+      "name": "Webhook → Verarbeiten → Benachrichtigen",
+      "description": "Empfängt externe Events, verarbeitet sie und benachrichtigt",
+      "blocks": ["webhook_receiver", "llm_summarizer", "slack_notifier"],
+      "use_cases": ["CRM-Events verarbeiten", "Formular-Eingänge", "Externe Trigger"],
+      "estimated_setup": "2-4 Stunden",
+      "estimated_monthly_cost_eur": "5-20"
+    }
+  },
+  "total_patterns": 2
+}
