@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "last_updated": "2026-03-28",
+  "version": "2.0",
+  "last_updated": "2026-03-30",
   "description": "Katalog aller Standard-Patterns für Automationen. Wird vom Planer gelesen und von Claude Code aktualisiert.",
   "patterns": {
     "monitor_summarize_notify": {
@@ -29,7 +29,45 @@
       "use_cases": ["CRM-Events verarbeiten", "Formular-Eingänge", "Externe Trigger"],
       "estimated_setup": "2-4 Stunden",
       "estimated_monthly_cost_eur": "5-20"
+    },
+    "lead_scrape_score_outreach": {
+      "name": "Scrapen → Bewerten → Personalisieren → Versenden",
+      "description": "Scrapt Leads (Google Maps/LinkedIn), vergibt IDs, bewertet nach Score, generiert personalisierte E-Mails, versendet automatisch, speichert im CRM",
+      "blocks": ["apify_scraper", "lead_id_generator", "lead_scorer", "notion_crm_sync", "llm_prompt_executor", "gmail_sender"],
+      "use_cases": ["Lead-Generierung", "Outbound-Marketing", "Akquise-Automatisierung"],
+      "estimated_setup": "3-4 Stunden",
+      "estimated_monthly_cost_eur": "20-50",
+      "proven_in": "grischa_agentcore24 (eigenes Lead-System)",
+      "example_config": {
+        "automations": [
+          {
+            "id": "google_maps_daily",
+            "name": "Tägliches Google Maps Scraping",
+            "blocks": ["apify_scraper", "lead_id_generator", "lead_scorer", "notion_crm_sync", "llm_prompt_executor", "gmail_sender"],
+            "schedule": "0 8 * * *",
+            "active": true
+          }
+        ]
+      }
+    },
+    "email_quickwin_followup": {
+      "name": "E-Mail prüfen → Quick-Win → Follow-Up",
+      "description": "Prüft Antworten auf Outreach-E-Mails, analysiert Interesse, generiert Quick-Win-Vorschlag und Follow-Up-Nachricht",
+      "blocks": ["email_monitor", "email_responder", "gmail_sender", "notion_crm_sync"],
+      "use_cases": ["E-Mail-Follow-Up", "Lead-Qualifizierung", "Automatischer Vertrieb"],
+      "estimated_setup": "2-3 Stunden",
+      "estimated_monthly_cost_eur": "10-20",
+      "proven_in": "grischa_agentcore24"
+    },
+    "webhook_crm_update": {
+      "name": "Webhook → CRM aktualisieren",
+      "description": "Empfängt Webhooks (Cal.com Termine, Tally Fragebögen) und aktualisiert Lead-Daten im CRM",
+      "blocks": ["calcom_webhook ODER tally_webhook", "notion_crm_sync"],
+      "use_cases": ["Termin-Tracking", "Fragebogen-Integration", "CRM-Automatisierung"],
+      "estimated_setup": "1-2 Stunden",
+      "estimated_monthly_cost_eur": "0-5",
+      "proven_in": "grischa_agentcore24"
     }
   },
-  "total_patterns": 2
+  "total_patterns": 5
 }

@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "last_updated": "2026-03-28",
+  "version": "2.0",
+  "last_updated": "2026-03-30",
   "description": "Katalog aller verfügbaren Automations-Bausteine. Wird vom Planer gelesen und von Claude Code aktualisiert.",
   "blocks": {
     "email_monitor": {
@@ -12,7 +12,7 @@
       "required_keys": [],
       "status": "stable",
       "use_cases": ["E-Mail-basierte Automationen", "Inbox-Monitoring"],
-      "statistics": {"used_in_projects": 0, "known_issues": []}
+      "statistics": {"used_in_projects": 1, "known_issues": []}
     },
     "llm_summarizer": {
       "name": "LLM Zusammenfasser",
@@ -73,10 +73,134 @@
       "status": "stable",
       "use_cases": ["CRM-Integration", "Externe Trigger", "Event-basierte Automationen"],
       "statistics": {"used_in_projects": 0, "known_issues": []}
+    },
+    "apify_scraper": {
+      "name": "Apify Scraper",
+      "file": "apify_scraper.py",
+      "description": "Google Maps + LinkedIn Lead-Scraping via Apify API. Extrahiert Firmen, E-Mails, Positionen, Tätigkeiten.",
+      "input": {"scrape_type": "google_maps|linkedin|both", "google_maps_query": "...", "max_results": 100},
+      "output": {"success": true, "data": {"leads": [], "count": 0}},
+      "required_keys": ["apify"],
+      "status": "stable",
+      "config_options": {
+        "google_maps_actor": "compass/crawler-google-places",
+        "email_extractor_actor": "apify/website-email-extractor",
+        "linkedin_actor": "apify/linkedin-profile-scraper"
+      },
+      "use_cases": ["Lead-Generierung", "Google Maps Scraping", "LinkedIn Scraping", "E-Mail-Extraktion"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "lead_id_generator": {
+      "name": "Lead-ID Generator",
+      "file": "lead_id_generator.py",
+      "description": "Generiert eindeutige Lead-IDs (AgentCore24-XXXX), prüft Duplikate via E-Mail und LinkedIn-URL in lokaler DB + Notion.",
+      "input": {"leads": []},
+      "output": {"success": true, "data": {"leads": [], "new_count": 0, "duplicate_count": 0}},
+      "required_keys": ["notion"],
+      "status": "stable",
+      "use_cases": ["Lead-Management", "Duplikat-Erkennung", "CRM-Vorbereitung"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "lead_scorer": {
+      "name": "Lead Scorer",
+      "file": "lead_scorer.py",
+      "description": "Bewertet Leads 0-100 nach Regeln (E-Mail, Website, Branche, Standort). Filtert nach Threshold.",
+      "input": {"leads": []},
+      "output": {"success": true, "data": {"leads": [], "above_threshold": 0}},
+      "required_keys": [],
+      "status": "stable",
+      "config_options": {
+        "rules": {"has_email": 40, "google_maps_with_website": 20, "branche_match": 20, "location_schweiz": 10},
+        "threshold": 60
+      },
+      "use_cases": ["Lead-Qualifizierung", "Priorisierung", "Automatische Filterung"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "llm_prompt_executor": {
+      "name": "LLM Prompt Executor",
+      "file": "llm_prompt_executor.py",
+      "description": "Wiederverwendbarer LLM-Block: Lädt Prompt-Template, ersetzt {{variables}}, ruft OpenAI API. Batch-Modus für viele Leads.",
+      "input": {"prompt_file": "...", "variables": {}, "leads": []},
+      "output": {"success": true, "data": {"generated_text": "...", "results": []}},
+      "required_keys": ["openai"],
+      "status": "stable",
+      "model_recommendations": {
+        "budget": "gpt-4o-mini (~$0.15/1K Aufrufe)",
+        "quality": "gpt-4o (~$2.50/1K Aufrufe)"
+      },
+      "use_cases": ["E-Mail-Generierung", "Lead-Analyse", "Personalisierung", "Content-Erstellung"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "notion_crm_sync": {
+      "name": "Notion CRM Sync",
+      "file": "notion_crm_sync.py",
+      "description": "CRUD für Notion Database: Leads erstellen, Duplikate prüfen, Status/Booking/Tally updaten. Rate-Limit-konform.",
+      "input": {"action": "create_leads|update_status|update_booking_data|update_tally_data", "leads": []},
+      "output": {"success": true, "data": {"created_count": 0}},
+      "required_keys": ["notion", "notion_database_id"],
+      "status": "stable",
+      "notion_fields": ["Lead ID", "Status", "Name", "Firma", "Email", "Phone", "Location", "Branche", "Position", "Tätigkeit", "Website", "LinkedIn", "Instagram", "Fragebogen-Antworten", "Quick-Win", "Tools", "Notizen", "Termin", "Letzte Nachricht am", "Erstellt am", "Score"],
+      "use_cases": ["CRM-Integration", "Lead-Management", "Status-Tracking"],
+      "statistics": {"used_in_projects": 1, "known_issues": ["Rate-Limit 3 req/sec beachten"]}
+    },
+    "gmail_sender": {
+      "name": "Gmail Sender",
+      "file": "gmail_sender.py",
+      "description": "Versendet personalisierte E-Mails via Gmail SMTP (App-Password). Ersetzt {{TALLY_LINK}} und {{CAL_LINK}} mit Lead-ID.",
+      "input": {"leads": [], "email_texts": [], "include_tally_link": true},
+      "output": {"success": true, "data": {"sent_count": 0}},
+      "required_keys": ["gmail_email", "gmail_app_password"],
+      "status": "stable",
+      "use_cases": ["E-Mail-Outreach", "Follow-Up", "Personalisierte Nachrichten"],
+      "statistics": {"used_in_projects": 1, "known_issues": ["Gmail Limit: 500 E-Mails/Tag"]}
+    },
+    "email_responder": {
+      "name": "E-Mail Responder",
+      "file": "email_responder.py",
+      "description": "Analysiert E-Mail-Antworten von Leads, erstellt Quick-Win-Analyse und generiert Follow-Up-Nachricht.",
+      "input": {"emails": []},
+      "output": {"success": true, "data": {"results": [], "count": 0}},
+      "required_keys": ["openai"],
+      "status": "stable",
+      "use_cases": ["E-Mail-Follow-Up", "Quick-Win-Erkennung", "Automatische Antworten"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "calcom_webhook": {
+      "name": "Cal.com Webhook",
+      "file": "calcom_webhook.py",
+      "description": "Verarbeitet Cal.com Buchungs-Webhooks. Extrahiert Lead-ID aus Metadata, Termin-Daten, Meeting-Link.",
+      "input": {"payload": {}, "signature": ""},
+      "output": {"success": true, "data": {"lead_id": "...", "termin_datum": "..."}},
+      "required_keys": ["calcom_webhook_secret"],
+      "status": "stable",
+      "use_cases": ["Termin-Tracking", "CRM-Integration", "Booking-Automation"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "tally_webhook": {
+      "name": "Tally Webhook",
+      "file": "tally_webhook.py",
+      "description": "Verarbeitet Tally Fragebogen-Submissions. Extrahiert Lead-ID + alle Antworten.",
+      "input": {"payload": {}, "signature": ""},
+      "output": {"success": true, "data": {"lead_id": "...", "antworten": {}}},
+      "required_keys": ["tally_webhook_secret"],
+      "status": "stable",
+      "use_cases": ["Fragebogen-Integration", "Lead-Qualifizierung", "CRM-Anreicherung"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
+    },
+    "api_key_manager": {
+      "name": "API Key Manager",
+      "file": "api_key_manager.py",
+      "description": "Verschlüsselte API-Key-Verwaltung (Fernet + SQLite). Speichern, Abrufen, Testen, Löschen. Wird als context['get_api_key'] bereitgestellt.",
+      "input": {"action": "set|get|delete|list|test|test_all"},
+      "output": {"success": true, "data": {}},
+      "required_keys": [],
+      "status": "stable",
+      "use_cases": ["Key-Management", "Dashboard-Integration", "Sicherheit"],
+      "statistics": {"used_in_projects": 1, "known_issues": []}
     }
   },
-  "total_blocks": 6,
-  "stable_blocks": 6,
+  "total_blocks": 16,
+  "stable_blocks": 16,
   "beta_blocks": 0,
   "planned_blocks": 0
 }
