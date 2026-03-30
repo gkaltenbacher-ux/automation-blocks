@@ -83,9 +83,9 @@
       "required_keys": ["apify"],
       "status": "stable",
       "config_options": {
-        "google_maps_actor": "compass/crawler-google-places",
-        "email_extractor_actor": "apify/website-email-extractor",
-        "linkedin_actor": "apify/linkedin-profile-scraper"
+        "google_maps_actor": "compass~crawler-google-places",
+        "email_extractor_actor": "alex_claw~website-email-extractor",
+        "linkedin_actor": "harvestapi~linkedin-profile-search"
       },
       "use_cases": ["Lead-Generierung", "Google Maps Scraping", "LinkedIn Scraping", "E-Mail-Extraktion"],
       "statistics": {"used_in_projects": 1, "known_issues": []}
